@@ -1,10 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTodos } from "./hooks/useTodos";
 import "./App.css";
 
 const Heading = ({ title }: { title: string }) => <h2>{title}</h2>;
@@ -41,11 +36,6 @@ const List = ({
 interface Payload {
   text: string;
 }
-interface Todo {
-  id: number;
-  text: string;
-  done: boolean;
-}
 
 const Button: React.FunctionComponent<
   React.DetailedHTMLProps<
@@ -66,9 +56,6 @@ const Button: React.FunctionComponent<
   </button>
 );
 
-type ActionType =
-  | { type: "ADD"; text: string }
-  | { type: "REMOVE"; id: number };
 const useNumber = (initialValue: number) => useState<number>(initialValue);
 
 type UseNumberValue = ReturnType<typeof useNumber>[0];
@@ -96,31 +83,17 @@ function App() {
       });
   }, []);
 
-  const [todos, dispatch] = useReducer((state: Todo[], action: ActionType) => {
-    switch (action.type) {
-      case "ADD":
-        return [
-          ...state,
-          {
-            id: state.length,
-            text: action.text,
-            done: false,
-          },
-        ];
-      case "REMOVE":
-        return state.filter(({ id }) => id !== action.id);
-      default:
-        throw new Error();
-    }
-  }, []);
+  const { todos, addTodo, removeTodo } = useTodos([
+    { id: 0, text: "Hey there", done: false },
+  ]);
 
   const newTodoRef = useRef<HTMLInputElement>(null);
   const OnAddTodo = useCallback(() => {
     if (newTodoRef.current) {
-      dispatch({ type: "ADD", text: newTodoRef.current.value });
+      addTodo(newTodoRef.current.value);
       newTodoRef.current.value = "";
     }
-  }, []);
+  }, [addTodo]);
 
   const [value, setValue] = useState(0);
 
@@ -141,9 +114,7 @@ function App() {
           return (
             <div key={todo.id}>
               {todo.text}
-              <Button onClick={() => dispatch({ type: "REMOVE", id: todo.id })}>
-                remove
-              </Button>
+              <Button onClick={() => removeTodo(todo.id)}>remove</Button>
             </div>
           );
         })}
