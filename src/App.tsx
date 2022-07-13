@@ -1,94 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTodos } from "./hooks/useTodos";
 import "./App.css";
-
-const Heading = ({ title }: { title: string }) => <h2>{title}</h2>;
-
-const Box = ({ children }: { children: React.ReactNode }) => (
-  <div
-    style={{
-      padding: "1rem",
-      fontWeight: "bold",
-    }}
-  >
-    {children}
-  </div>
-);
-
-const List = ({
-  items,
-  onClick,
-}: {
-  items: string[];
-  onClick?: (item: string) => void;
-}) => (
-  <ul>
-    {items.map((item, index) => {
-      return (
-        <li key={index} onClick={() => onClick?.(item)}>
-          {item}
-        </li>
-      );
-    })}
-  </ul>
-);
+import {
+  UL,
+  Box,
+  Button,
+  Heading,
+  Incrementer,
+  List,
+} from "./components/index";
 
 interface Payload {
   text: string;
-}
-
-const Button: React.FunctionComponent<
-  React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  > & { title?: string }
-> = ({ title, children, style, ...rest }) => (
-  <button
-    style={{
-      ...style,
-      backgroundColor: "dodgerblue",
-      color: "white",
-      fontSize: "xx-large",
-    }}
-    {...rest}
-  >
-    {title ?? children}
-  </button>
-);
-
-const useNumber = (initialValue: number) => useState<number>(initialValue);
-
-type UseNumberValue = ReturnType<typeof useNumber>[0];
-type UseNumberSetValue = ReturnType<typeof useNumber>[1];
-
-const Incrementer: React.FunctionComponent<{
-  value: UseNumberValue;
-  setValue: UseNumberSetValue;
-}> = ({ value, setValue }) => (
-  <Button onClick={() => setValue(value + 1)} title={`Add - ${value}`} />
-);
-
-function UL<T>({
-  items,
-  render,
-  itemClick,
-}: React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLUListElement>,
-  HTMLUListElement
-> & {
-  items: T[];
-  render: (item: T) => React.ReactNode;
-  itemClick: (item: T) => void;
-}) {
-  return (
-    <ul>
-      {items.map((item, index) => (
-        <li onClick={() => itemClick(item)} key={index}>
-          {render(item)}
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 function App() {
@@ -123,9 +46,8 @@ function App() {
   return (
     <div>
       <Heading title="Introduction" />
-      <Box>How are you?</Box>
-      <List items={["one", "two", "three"]} onClick={onListClick} />
-      <Box>{JSON.stringify(payload)}</Box>
+      <List items={["one", "two"]} onClick={onListClick} />
+      <Box>{payload?.text}</Box>
       <Incrementer value={value} setValue={setValue} />
       <Heading title="Todos" />
       <div>
