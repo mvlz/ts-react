@@ -1,23 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTodos } from "./hooks/useTodos";
 import "./App.css";
+import { UL, Box, Button, Heading, Incrementer } from "./components/index";
 import {
-  UL,
-  Box,
-  Button,
-  Heading,
-  Incrementer,
-  List,
-} from "./components/index";
+  useTodos,
+  useAddTodo,
+  useRemoveTodo,
+  TodosProvider,
+} from "./providers/TodoContext";
 
 interface Payload {
   text: string;
 }
 
 function App() {
-  const onListClick = useCallback((item: string) => {
-    alert(item);
-  }, []);
+  const todos = useTodos();
+  const addTodo = useAddTodo();
+  const removeTodo = useRemoveTodo();
 
   const [payload, setPayload] = useState<Payload | null>(null);
 
@@ -28,10 +26,6 @@ function App() {
         setPayload(data);
       });
   }, []);
-
-  const { todos, addTodo, removeTodo } = useTodos([
-    { id: 0, text: "Hey there", done: false },
-  ]);
 
   const newTodoRef = useRef<HTMLInputElement>(null);
   const OnAddTodo = useCallback(() => {
@@ -46,7 +40,6 @@ function App() {
   return (
     <div>
       <Heading title="Introduction" />
-      <List items={["one", "two"]} onClick={onListClick} />
       <Box>{payload?.text}</Box>
       <Incrementer value={value} setValue={setValue} />
       <Heading title="Todos" />
@@ -67,5 +60,28 @@ function App() {
     </div>
   );
 }
+const JustShowTodos = () => {
+  const todos = useTodos();
+  return (
+    <UL
+      items={todos}
+      itemClick={() => {}}
+      render={(todo) => <>{todo.text}</>}
+    />
+  );
+};
+const AppWrapper = () => (
+  <TodosProvider initialTodos={[{ id: 0, text: "Hey there", done: false }]}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "50% 50%",
+      }}
+    >
+      <App />
+      <JustShowTodos />
+    </div>
+  </TodosProvider>
+);
 
-export default App;
+export default AppWrapper;
