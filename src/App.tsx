@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
-import { UL, Box, Button, Heading, Incrementer } from "./components/index";
+import {
+  UL,
+  Box,
+  Button,
+  Heading,
+  Incrementer,
+  Payload,
+} from "./components/index";
 import {
   useTodos,
   useAddTodo,
@@ -8,24 +15,10 @@ import {
   TodosProvider,
 } from "./providers/TodoContext";
 
-interface Payload {
-  text: string;
-}
-
 function App() {
   const todos = useTodos();
   const addTodo = useAddTodo();
   const removeTodo = useRemoveTodo();
-
-  const [payload, setPayload] = useState<Payload | null>(null);
-
-  useEffect(() => {
-    fetch("/data.json")
-      .then((resp) => resp.json())
-      .then((data) => {
-        setPayload(data);
-      });
-  }, []);
 
   const newTodoRef = useRef<HTMLInputElement>(null);
   const OnAddTodo = useCallback(() => {
@@ -40,7 +33,9 @@ function App() {
   return (
     <div>
       <Heading title="Introduction" />
-      <Box>{payload?.text}</Box>
+      <Box>
+        <Payload />
+      </Box>
       <Incrementer value={value} setValue={setValue} />
       <Heading title="Todos" />
       <div>
