@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import {
   UL,
@@ -8,19 +8,15 @@ import {
   Incrementer,
   Payload,
 } from "./components/index";
-import {
-  useTodos,
-  useAddTodo,
-  useRemoveTodo,
-  TodosProvider,
-} from "./providers/TodoContext";
+import { useTodos } from "./hooks/useTodos.v2";
+
+const initialTodos = [{ id: 0, text: "Hey there", done: false }];
 
 function App() {
-  const todos = useTodos();
-  const addTodo = useAddTodo();
-  const removeTodo = useRemoveTodo();
+  const { todos, addTodo, removeTodo } = useTodos(initialTodos);
 
   const newTodoRef = useRef<HTMLInputElement>(null);
+
   const OnAddTodo = useCallback(() => {
     if (newTodoRef.current) {
       addTodo(newTodoRef.current.value);
@@ -34,6 +30,7 @@ function App() {
     <div>
       <Heading title="Introduction" />
       <Box>
+        {" "}
         <Payload />
       </Box>
       <Incrementer value={value} setValue={setValue} />
@@ -56,7 +53,7 @@ function App() {
   );
 }
 const JustShowTodos = () => {
-  const todos = useTodos();
+  const { todos } = useTodos(initialTodos);
   return (
     <UL
       items={todos}
@@ -66,17 +63,15 @@ const JustShowTodos = () => {
   );
 };
 const AppWrapper = () => (
-  <TodosProvider initialTodos={[{ id: 0, text: "Hey there", done: false }]}>
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "50% 50%",
-      }}
-    >
-      <App />
-      <JustShowTodos />
-    </div>
-  </TodosProvider>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "50% 50%",
+    }}
+  >
+    <App />
+    <JustShowTodos />
+  </div>
 );
 
 export default AppWrapper;
