@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import {
   UL,
@@ -32,7 +32,7 @@ function App() {
 
   return (
     <div>
-      <Heading title="Introduction" />
+      <Heading title="Context API" />
       <Box>
         <Payload />
       </Box>
