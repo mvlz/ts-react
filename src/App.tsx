@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { useTodos } from "./hooks/useTodos";
 import "./App.css";
 import {
   UL,
@@ -9,25 +8,27 @@ import {
   Incrementer,
   Payload,
 } from "./components/index";
+import { RootState, store } from "./app/store";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { addTodo, removeTodo } from "./features/todos/todosSlice";
 
 function App() {
-  const { todos, addTodo, removeTodo } = useTodos([
-    { id: 0, text: "Hey there", done: false },
-  ]);
-
+  const todos = useSelector((state: RootState) => state.todos.todos);
+  const dispatch = useDispatch();
   const newTodoRef = useRef<HTMLInputElement>(null);
+
   const OnAddTodo = useCallback(() => {
     if (newTodoRef.current) {
-      addTodo(newTodoRef.current.value);
+      dispatch(addTodo(newTodoRef.current.value));
       newTodoRef.current.value = "";
     }
-  }, [addTodo]);
+  }, [dispatch]);
 
   const [value, setValue] = useState(0);
 
   return (
     <div>
-      <Heading title="Introduction" />
+      <Heading title="Redux Toolkit" />
       <Box>
         <Payload />
       </Box>
@@ -43,12 +44,37 @@ function App() {
         render={(todo) => (
           <>
             {todo.text}
-            <button onClick={() => removeTodo(todo.id)}>Remove</button>
+            <button onClick={() => dispatch(removeTodo(todo.id))}>
+              Remove
+            </button>
           </>
         )}
       />
     </div>
   );
 }
+const JustShowTodos = () => {
+  const todos = useSelector((state: RootState) => state.todos.todos);
+  return (
+    <UL
+      items={todos}
+      itemClick={() => {}}
+      render={(todo) => <>{todo.text}</>}
+    />
+  );
+};
+const AppWrapper = () => (
+  <Provider store={store}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "50% 50%",
+      }}
+    >
+      <App />
+      <JustShowTodos />
+    </div>
+  </Provider>
+);
 
-export default App;
+export default AppWrapper;
