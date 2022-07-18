@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTodos } from "./hooks/useTodos";
 import "./App.css";
 import {
@@ -7,28 +7,10 @@ import {
   Button,
   Heading,
   Incrementer,
-  List,
+  Payload,
 } from "./components/index";
 
-interface Payload {
-  text: string;
-}
-
 function App() {
-  const onListClick = useCallback((item: string) => {
-    alert(item);
-  }, []);
-
-  const [payload, setPayload] = useState<Payload | null>(null);
-
-  useEffect(() => {
-    fetch("/data.json")
-      .then((resp) => resp.json())
-      .then((data) => {
-        setPayload(data);
-      });
-  }, []);
-
   const { todos, addTodo, removeTodo } = useTodos([
     { id: 0, text: "Hey there", done: false },
   ]);
@@ -46,8 +28,9 @@ function App() {
   return (
     <div>
       <Heading title="Introduction" />
-      <List items={["one", "two"]} onClick={onListClick} />
-      <Box>{payload?.text}</Box>
+      <Box>
+        <Payload />
+      </Box>
       <Incrementer value={value} setValue={setValue} />
       <Heading title="Todos" />
       <div>
